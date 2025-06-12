@@ -1,3 +1,0 @@
-"""
-AI Nable Backend Application
-""" 
