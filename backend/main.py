@@ -220,7 +220,7 @@ async def narrate_text(request: NarrationRequest):
             status_code=500,
             detail=f"An error occurred while generating narration: {str(e)}"
         )
-
+print("Hello World")
 @app.get("/")
 async def root():
     return {"message": "Welcome to AI Nable Backend"} 
