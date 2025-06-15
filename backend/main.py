@@ -5,8 +5,9 @@ import boto3
 import os
 from dotenv import load_dotenv
 import tempfile
-from typing import Optional
+from typing import Optional, List
 import logging
+import json
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -41,12 +42,41 @@ class TextExtractionResponse(BaseModel):
     file_name: str
     file_type: str
 
+class TextSimplificationResponse(BaseModel):
+    simplified_text: str
+    bullet_points: List[str]
+    step_by_step: List[str]
+
+class NarrationResponse(BaseModel):
+    audio_url: str
+    duration: float
+
 class ErrorResponse(BaseModel):
     detail: str
 
-# Initialize AWS Textract client
+class TextSimplificationRequest(BaseModel):
+    text: str
+
+class NarrationRequest(BaseModel):
+    text: str
+
+# Initialize AWS clients
 textract_client = boto3.client(
     'textract',
+    aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+    aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+    region_name=os.getenv('AWS_REGION', 'us-east-1')
+)
+
+bedrock_client = boto3.client(
+    'bedrock-runtime',
+    aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+    aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+    region_name=os.getenv('AWS_REGION', 'us-east-1')
+)
+
+polly_client = boto3.client(
+    'polly',
     aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
     aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
     region_name=os.getenv('AWS_REGION', 'us-east-1')
@@ -115,6 +145,80 @@ async def upload_file(file: UploadFile = File(...)):
         raise HTTPException(
             status_code=500,
             detail=f"An error occurred while processing the file: {str(e)}"
+        )
+
+@app.post("/simplify", response_model=TextSimplificationResponse, responses={400: {"model": ErrorResponse}, 500: {"model": ErrorResponse}})
+async def simplify_text(request: TextSimplificationRequest):
+    try:
+        # Prepare the prompt for text simplification
+        prompt = f"""Please simplify the following text for a student with learning challenges. 
+        Make it more accessible and easier to understand while maintaining the key information.
+        Provide three formats:
+        1. A simplified paragraph version
+        2. Key bullet points
+        3. Step-by-step explanation
+
+        Text to simplify:
+        {request.text}
+
+        Please format your response as a JSON object with these keys:
+        - simplified_text: The simplified paragraph version
+        - bullet_points: Array of key points
+        - step_by_step: Array of steps for understanding
+        """
+
+        # Call Bedrock API
+        response = bedrock_client.invoke_model(
+            modelId='anthropic.claude-3-sonnet-20240229-v1:0',
+            body=json.dumps({
+                "prompt": prompt,
+                "max_tokens": 1000,
+                "temperature": 0.7
+            })
+        )
+
+        # Parse the response
+        response_body = json.loads(response['body'].read())
+        simplified_content = json.loads(response_body['completion'])
+
+        return TextSimplificationResponse(
+            simplified_text=simplified_content['simplified_text'],
+            bullet_points=simplified_content['bullet_points'],
+            step_by_step=simplified_content['step_by_step']
+        )
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"An error occurred while simplifying the text: {str(e)}"
+        )
+
+@app.post("/narrate", response_model=NarrationResponse, responses={400: {"model": ErrorResponse}, 500: {"model": ErrorResponse}})
+async def narrate_text(request: NarrationRequest):
+    try:
+        # Call Polly to generate speech
+        response = polly_client.synthesize_speech(
+            Text=request.text,
+            OutputFormat='mp3',
+            VoiceId='Joanna'  # You can make this configurable
+        )
+
+        # Save the audio file temporarily
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.mp3') as temp_file:
+            temp_file.write(response['AudioStream'].read())
+            temp_file.flush()
+            
+            # In a production environment, you would upload this to S3
+            # For now, we'll return the local file path
+            return NarrationResponse(
+                audio_url=f"file://{temp_file.name}",
+                duration=len(request.text.split()) / 3  # Rough estimate of duration
+            )
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"An error occurred while generating narration: {str(e)}"
         )
 
 @app.get("/")
