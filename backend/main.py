@@ -261,6 +261,7 @@ Please format your response as a JSON object with these keys:
                 "bullet_points": [],
                 "step_by_step": []
             }
+            
         return simplified_content
     except Exception as e:
         return {"error": str(e)}
