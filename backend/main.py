@@ -1,5 +1,6 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 import boto3
 import os
@@ -8,6 +9,7 @@ import tempfile
 from typing import Optional, List
 import logging
 import json
+import base64
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -60,6 +62,21 @@ class TextSimplificationRequest(BaseModel):
 
 class NarrationRequest(BaseModel):
     text: str
+
+class VisualizeRequest(BaseModel):
+    step_by_step: List[str]
+
+class VisualizeResponse(BaseModel):
+    steps: List[str]
+    image_prompts: List[str]
+    image_urls: List[str]
+
+class QARequest(BaseModel):
+    context: str
+    question: str
+
+class QAResponse(BaseModel):
+    answer: str
 
 # Initialize AWS clients
 textract_client = boto3.client(
@@ -261,8 +278,88 @@ Please format your response as a JSON object with these keys:
                 "bullet_points": [],
                 "step_by_step": []
             }
-            
         return simplified_content
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.post("/visual-model")
+async def generate_visual_model(request: Request):
+    try:
+        body = await request.json()
+        simplified_text = body.get("simplified_text", "")
+
+        if not simplified_text:
+            raise HTTPException(status_code = 400, detail = "Missing 'simplified_text' in request.")
+
+        #prompt that is being sent to image generation model
+        prompt = f"Create a clear, simple educational image that explains the following in a visual way for students:\n\n{simplified_text}"
+
+        response = bedrock_client.invoke_model(
+            modelId = "amazon.titan-image-generator-v1", #model ID
+            body = json.dumps({
+                "taskType": "TEXT_IMAGE", #text to image task
+                "textToImageParams": {
+                    "text": prompt
+                },
+                "imageGenerationConfig": {
+                    "numberOfImages": 1,
+                    "quality": "standard",
+                    "height": 512,
+                    "width": 512,
+                    "cfgScale": 8.0
+                }
+            }),
+            contentType = "application/json",
+            accept = "application/json"
+        )
+        #read + decode the response
+        raw_body = response["body"].read()
+        response_data = json.loads(raw_body)
+        base64_image = response_data["images"][0]  
+
+        #returns image + title + description
+        return {
+            "title": "Visual Summary",
+            "description": simplified_text,
+            "image_base64": base64_image
+        }
+
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+
+@app.post("/ask-questions")
+async def ask_question(request: dict):
+    try:
+        context = request.get("context", "")
+        question = request.get("question", "")
+        #prompt for the question-answering model with context and question
+        prompt = f"""You are a helpful tutor for students with learning differences.
+Using the following educational material, answer the student’s question clearly and simply.
+
+Context:
+{context}
+
+Student's question:
+{question}
+
+Answer:"""
+
+        response = bedrock_client.invoke_model(
+            modelId = 'meta.llama3-8b-instruct-v1:0', # LLaMA 3 model ID
+            body = json.dumps({
+                "prompt": prompt,
+                "max_gen_len": 512,
+                "temperature": 0.7
+            })
+        )
+
+        response_body = json.loads(response['body'].read())
+        answer = response_body.get("generation", "I'm not sure how to answer that.")
+        
+        #return original questions and answer
+        return {"question": question, "answer": answer}
+
     except Exception as e:
         return {"error": str(e)}
 
