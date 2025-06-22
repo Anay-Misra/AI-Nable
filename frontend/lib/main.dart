@@ -6,19 +6,19 @@ import 'welcome_screen.dart';
 import 'dashboard_screen.dart';
 import 'second_screen.dart';
 import 'simplified_output_screen.dart';
-import 'summaries_screen.dart';
-import 'audio_files_screen.dart';
 import 'favorites_screen.dart';
 import 'chatbot_screen.dart';
 import 'settings_screen.dart';
 import 'lesson.dart';
+import 'previous_uploads_screen.dart';
 
 // ✅ Define global notifiers
 final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
 final ValueNotifier<double> textScaleFactorNotifier = ValueNotifier(1.0);
 
-// ✅ Global lesson list
-List<Lesson> lessonList = [];
+// ✅ Global lesson lists
+List<Lesson> previousUploads = [];
+List<Lesson> favoriteLessons = []; // Favorites will remain separate
 
 void main() {
   runApp(const SnapStudyApp());
@@ -92,21 +92,34 @@ class SnapStudyApp extends StatelessWidget {
       case '/dashboard':
         return MaterialPageRoute(builder: (_) => const DashboardScreen());
       case '/second':
-        final fileName = settings.arguments as String?;
-        return fileName == null
-            ? _errorRoute("Missing file name for /second")
-            : MaterialPageRoute(builder: (_) => SecondScreen(fileName: fileName));
+        final args = settings.arguments as Map<String, dynamic>?;
+        if (args == null || args['fileName'] == null || args['filePath'] == null) {
+          return _errorRoute("Missing file information for /second");
+        }
+        return MaterialPageRoute(
+          builder: (_) => SecondScreen(
+            fileName: args['fileName'],
+            filePath: args['filePath'],
+          )
+        );
       case '/simplified':
-        final lessonTitle = settings.arguments as String?;
-        return lessonTitle == null
-            ? _errorRoute("Missing title for /simplified")
-            : MaterialPageRoute(builder: (_) => SimplifiedOutputScreen(title: lessonTitle));
+        final args = settings.arguments as Map<String, dynamic>?;
+        if (args == null || args['title'] == null || args['extractedText'] == null) {
+          return _errorRoute("Missing arguments for /simplified");
+        }
+        return MaterialPageRoute(
+          builder: (_) => SimplifiedOutputScreen(arguments: args)
+        );
+      case '/previous_uploads':
+        return MaterialPageRoute(builder: (_) => PreviousUploadsScreen(uploads: previousUploads));
       case '/summaries':
-        return MaterialPageRoute(builder: (_) => SummariesScreen(summaries: lessonList));
+        // This route is deprecated and will be removed. For now, forward to the new screen.
+        return MaterialPageRoute(builder: (_) => PreviousUploadsScreen(uploads: previousUploads));
       case '/audio':
-        return MaterialPageRoute(builder: (_) => AudioFilesScreen(audioLessons: lessonList));
+        // This route is deprecated and will be removed. For now, forward to the new screen.
+        return MaterialPageRoute(builder: (_) => PreviousUploadsScreen(uploads: previousUploads));
       case '/favorites':
-        return MaterialPageRoute(builder: (_) => FavoritesScreen(favorites: lessonList));
+        return MaterialPageRoute(builder: (_) => FavoritesScreen(favorites: favoriteLessons));
       case '/chatbot':
         return MaterialPageRoute(builder: (_) => const ChatbotScreen());
       case '/settings':

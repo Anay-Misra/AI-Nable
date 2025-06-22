@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 import 'lesson.dart';
-import 'widgets/lesson_card.dart'; // ✅ Correct widget import
+import 'widgets/lesson_card.dart';
 
-class FavoritesScreen extends StatelessWidget {
-  final List<Lesson> favorites;
+class PreviousUploadsScreen extends StatelessWidget {
+  final List<Lesson> uploads;
 
-  const FavoritesScreen({super.key, required this.favorites});
+  const PreviousUploadsScreen({super.key, required this.uploads});
 
   @override
   Widget build(BuildContext context) {
-    final onlyFavorites = favorites.where((lesson) => lesson.isFavorite).toList();
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // 🔙 Back button and logo
+            // Back Button + Logo Row
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -26,43 +24,53 @@ class FavoritesScreen extends StatelessWidget {
                   onPressed: () => Navigator.pop(context),
                 ),
                 Image.asset("assets/logo.png", height: 40),
-                const SizedBox(width: 40), // spacing placeholder
+                const SizedBox(width: 40), // Spacer
               ],
             ),
-
             const SizedBox(height: 8),
 
+            // Title
             const Text(
               "Snap Study",
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Color(0xFFDE802F)),
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFFDE802F),
+              ),
             ),
             const Text(
-              "Favorites",
+              "Previous Uploads",
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20, color: Colors.orange, fontFamily: 'YourHandwrittenFont'),
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.orange,
+              ),
             ),
-
             const SizedBox(height: 12),
-            Image.asset("assets/bear_favorite.png", height: 100),
-            const SizedBox(height: 16),
 
-            // Favorite cards
-            if (onlyFavorites.isEmpty)
+            // Content
+            if (uploads.isEmpty)
               const Center(
                 child: Padding(
                   padding: EdgeInsets.all(32),
                   child: Text(
-                    "No favorites yet!",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
+                    "No uploads yet!",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                    ),
                   ),
                 ),
               )
             else
-              ...onlyFavorites.map((lesson) => LessonCard(lesson: lesson)),
+              ...uploads.map(
+                (lesson) => LessonCard(lesson: lesson),
+              ),
           ],
         ),
       ),
     );
   }
-}
+} 

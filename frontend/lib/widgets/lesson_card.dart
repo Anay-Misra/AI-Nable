@@ -4,9 +4,19 @@ import '../lesson.dart';
 
 class LessonCard extends StatelessWidget {
   final Lesson lesson;
-  final String type;
 
-  const LessonCard({super.key, required this.lesson, required this.type});
+  const LessonCard({super.key, required this.lesson});
+
+  void _handleAction(BuildContext context) {
+    Navigator.pushNamed(
+      context,
+      '/simplified',
+      arguments: {
+        'title': lesson.title,
+        'extractedText': lesson.originalContent,
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +38,8 @@ class LessonCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _actionButton(type),
-              _actionButton("Edit"),
+              _actionButton(context, "View"),
+              _actionButton(context, "Edit"),
             ],
           ),
         ],
@@ -37,9 +47,18 @@ class LessonCard extends StatelessWidget {
     );
   }
 
-  Widget _actionButton(String label) {
+  Widget _actionButton(BuildContext context, String label) {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        if (label == 'View') {
+          _handleAction(context);
+        } else {
+          // Handle Edit, or other actions
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Edit feature coming soon!")),
+          );
+        }
+      },
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFFF19D47),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),

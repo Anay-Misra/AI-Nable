@@ -37,7 +37,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 const Text(
-                  'You do not have any files yet.\nLet’s start by uploading your first lesson!',
+                  'You do not have any files yet.\nLet\'s start by uploading your first lesson!',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -58,7 +58,11 @@ class WelcomeScreen extends StatelessWidget {
 
                     if (result != null && result.files.single.path != null) {
                       final fileName = result.files.single.name;
-                      Navigator.pushNamed(context, '/second', arguments: fileName);
+                      final filePath = result.files.single.path!;
+                      Navigator.pushNamed(context, '/second', arguments: {
+                        'fileName': fileName,
+                        'filePath': filePath,
+                      });
                     }
                   },
                   style: ElevatedButton.styleFrom(

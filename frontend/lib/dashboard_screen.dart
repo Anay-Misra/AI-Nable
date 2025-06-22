@@ -12,121 +12,122 @@ class DashboardScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // 🔹 Top Row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Image.asset('assets/logo.png', height: 70),
-                  IconButton(
-                    icon: const Icon(Icons.settings, color: Color(0xFFDE802F)),
-                    iconSize: 32.0,
-                    padding: const EdgeInsets.all(8),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/settings');
-                    },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // 🔹 Top Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Image.asset('assets/logo.png', height: 70),
+                    IconButton(
+                      icon: const Icon(Icons.settings, color: Color(0xFFDE802F)),
+                      iconSize: 32.0,
+                      padding: const EdgeInsets.all(8),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/settings');
+                      },
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 12),
+                const Text(
+                  'Snap Study',
+                  style: TextStyle(
+                    fontSize: 52,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFFDE802F),
                   ),
-                ],
-              ),
-
-              const SizedBox(height: 12),
-              const Text(
-                'Snap Study',
-                style: TextStyle(
-                  fontSize: 52,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFDE802F),
                 ),
-              ),
-              const Text(
-                'Dashboard',
-                style: TextStyle(
-                  fontSize: 40,
-                  color: Colors.orange,
-                  fontFamily: 'monospace',
+                const Text(
+                  'Dashboard',
+                  style: TextStyle(
+                    fontSize: 40,
+                    color: Colors.orange,
+                    fontFamily: 'monospace',
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // 🔹 Dashboard Buttons
-              DashboardButton(
-                icon: Icons.menu,
-                label: 'My Summaries',
-                onTap: () {
-                  Navigator.pushNamed(context, '/summaries');
-                },
-              ),
-              DashboardButton(
-                icon: Icons.music_note,
-                label: 'My Audio Files',
-                onTap: () {
-                  Navigator.pushNamed(context, '/audio');
-                },
-              ),
-              DashboardButton(
-                icon: Icons.favorite,
-                label: 'Favorites',
-                onTap: () {
-                  Navigator.pushNamed(context, '/favorites');
-                },
-              ),
-              DashboardButton(
-                icon: Icons.question_answer,
-                label: 'Ask Tobi Chatbot',
-                onTap: () {
-                  Navigator.pushNamed(context, '/chatbot');
-                },
-              ),
+                // 🔹 Dashboard Buttons
+                DashboardButton(
+                  icon: Icons.history,
+                  label: 'Previous Uploads',
+                  onTap: () {
+                    Navigator.pushNamed(context, '/previous_uploads');
+                  },
+                ),
+                DashboardButton(
+                  icon: Icons.favorite,
+                  label: 'Favorites',
+                  onTap: () {
+                    Navigator.pushNamed(context, '/favorites');
+                  },
+                ),
+                DashboardButton(
+                  icon: Icons.question_answer,
+                  label: 'Ask Tobi Chatbot',
+                  onTap: () {
+                    Navigator.pushNamed(context, '/chatbot');
+                  },
+                ),
 
-              const SizedBox(height: 14),
+                const SizedBox(height: 14),
 
-              // 🔹 Upload Icon & Bear Image Row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Image.asset('assets/upload_icon.png', height: 240, width: screenWidth * 0.35),
-                  Image.asset('assets/bear_learning.png', height: 240, width: screenWidth * 0.35),
-                ],
-              ),
+                // 🔹 Upload Icon & Bear Image Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Image.asset('assets/upload_icon.png', height: 240, width: screenWidth * 0.35),
+                    Image.asset('assets/bear_learning.png', height: 240, width: screenWidth * 0.35),
+                  ],
+                ),
 
-              const SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-              // 🔹 Upload Button
-              ElevatedButton(
-                onPressed: () async {
-                  FilePickerResult? result = await FilePicker.platform.pickFiles(
-                    type: FileType.custom,
-                    allowedExtensions: ['pdf', 'png', 'jpg'],
-                  );
-
-                  if (result != null && result.files.single.path != null) {
-                    String fileName = result.files.single.name;
-                    Navigator.pushNamed(
-                      context,
-                      '/second',
-                      arguments: fileName,
+                // 🔹 Upload Button
+                ElevatedButton(
+                  onPressed: () async {
+                    FilePickerResult? result = await FilePicker.platform.pickFiles(
+                      type: FileType.custom,
+                      allowedExtensions: ['pdf', 'png', 'jpg', 'jpeg'],
                     );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFF19D47),
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+
+                    if (result != null && result.files.single.path != null) {
+                      String fileName = result.files.single.name;
+                      String filePath = result.files.single.path!;
+                      
+                      Navigator.pushNamed(
+                        context,
+                        '/second',
+                        arguments: {
+                          'fileName': fileName,
+                          'filePath': filePath,
+                        },
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFF19D47),
+                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    elevation: 2,
                   ),
-                  elevation: 2,
+                  child: const Text(
+                    'Teach me Tobi!',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
                 ),
-                child: const Text(
-                  'Teach me Tobi!',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-              ),
-            ],
+                const SizedBox(height: 20), // Add bottom padding
+              ],
+            ),
           ),
         ),
       ),
