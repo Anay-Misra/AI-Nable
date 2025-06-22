@@ -139,7 +139,17 @@ class _SimplifiedOutputScreenState extends State<SimplifiedOutputScreen> {
 
     setState(() => _isNarrationLoading = true);
     try {
+      // Use the content for the current display mode
       final textToNarrate = _getCurrentContent();
+      
+      // Debug logging to see what text is being sent
+      print("=== AUDIO NARRATION DEBUG ===");
+      print("Current mode: $_currentMode");
+      print("Text length: ${textToNarrate.length} characters");
+      print("Text preview: ${textToNarrate.substring(0, textToNarrate.length > 200 ? 200 : textToNarrate.length)}...");
+      print("Full text: $textToNarrate");
+      print("=============================");
+      
       final audioBase64 = await ApiService.narrateText(textToNarrate);
       
       if (audioBase64.isEmpty) {
