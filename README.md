@@ -22,6 +22,8 @@
 - **Voice-First Experience**: Natural narration
 - **Interactive Support**: AI chatbot for questions and clarification
 - **Accessibility Focus**: Designed specifically for neurodiverse learners
+ 
+Our app, **Snap Study**, brings these tools together to support students with ADHD, dyslexia, and low literacy.
 
 ## 🎯 Real-World Impact
 
