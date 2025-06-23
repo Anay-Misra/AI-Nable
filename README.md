@@ -125,7 +125,7 @@ flutter run
 - **Audio Narration**: Tap play button to hear Amazon Polly narration
 - **Visual Highlighting**: Words highlight as they're spoken
 - **Voice Options**: Switch between different Polly voices
-- **Playback Control**: Adjust speed and pause/resume
+- **Playback Control**: Pause and resume
 
 #### 5. **Interactive Learning Support**
 - **Q&A Chatbot**: Ask questions about the content
@@ -139,27 +139,7 @@ flutter run
 
 ### 🧪 Testing Scenarios for Judges:
 
-#### **Scenario 1: Complex Science Content**
-1. Upload a complex biology PDF
-2. Observe text extraction accuracy
-3. Test simplification quality across levels
-4. Verify audio narration clarity
-5. Test Q&A functionality
-
-#### **Scenario 2: Accessibility Testing**
-1. Test with different voice options
-2. Verify visual highlighting sync
-3. Check offline functionality
-4. Test content saving/retrieval
-
-#### **Scenario 3: Performance Testing**
-1. Upload large PDF files
-2. Test processing speed
-3. Verify error handling
-4. Check memory usage
-
 ## 📊 Technical Quality Indicators
-
 ### Code Quality:
 - **Clean Architecture**: Separation of concerns between frontend/backend
 - **Error Handling**: Comprehensive error management and user feedback
