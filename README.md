@@ -108,7 +108,8 @@ flutter run
 
 #### 2. **File Upload Process**
 - Tap "Upload New File" on dashboard
-- Select an educational PDF (e.g., science textbook page)
+- Select an educational PDF (e.g., science textbook page, [Photosynthsis](https://www.kidsdiscover.com/wp-content/uploads/2012/03/PhotosynthesisFINAL.pdf?srsltid=AfmBOooqCe9fZOXYhzCj-eSo6AKi_Eqb55jZlpgul_L9-RnWxcf6S5eP) or [Volcanoes](https://kidsdiscover.blob.core.windows.net/kdoassets/uploads/infographics/Volcanoes-Infographic-Kids-Discover.pdf))
+- Ensure that the PDF file is supported by AWS Textract (Otherwise it will gracefully fail and ask you to upload one again :) )
 - Watch real-time text extraction via Amazon Textract
 - See extracted text preview
 
