@@ -123,8 +123,6 @@ flutter run
 
 #### 4. **Multimodal Learning Experience**
 - **Audio Narration**: Tap play button to hear Amazon Polly narration
-- **Visual Highlighting**: Words highlight as they're spoken
-- **Voice Options**: Switch between different Polly voices
 - **Playback Control**: Pause and resume
 
 #### 5. **Interactive Learning Support**
