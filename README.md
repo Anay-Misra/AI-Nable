@@ -19,7 +19,7 @@
 ### Key Features:
 - **Multimodal Learning**: Text, audio, and visual content adaptation
 - **Personalized Simplification**: AI-powered content adjustment based on complexity
-- **Voice-First Experience**: Natural narration with visual word highlighting
+- **Voice-First Experience**: Natural narration
 - **Interactive Support**: AI chatbot for questions and clarification
 - **Accessibility Focus**: Designed specifically for neurodiverse learners
 
