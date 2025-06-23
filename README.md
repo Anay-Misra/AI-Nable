@@ -40,7 +40,6 @@
 - **Amazon Textract**: Intelligent document text extraction
 - **Amazon Bedrock**: Claude 3 Haiku for text simplification and content generation
 - **Amazon Polly**: Natural text-to-speech
-- **AWS Lambda**: Serverless backend processing
 - **Amazon S3**: File storage and management
 
 ### Architecture:
