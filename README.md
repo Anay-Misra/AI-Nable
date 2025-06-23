@@ -174,5 +174,5 @@ flutter run
 ---
 
 **Repository**: https://github.com/Anay-Misra/AI-Nable  
-**Demo Video**: [Link to be provided]  
+**Demo Video**: https://www.youtube.com/watch?v=6THwhBVxuzc 
 **Team**: Anay Misra, Sanskriti, Anvesha, Saksham 
