@@ -38,7 +38,7 @@
 
 ### AWS Services Used:
 - **Amazon Textract**: Intelligent document text extraction
-- **Amazon Bedrock**: Claude 3.5 Sonnet for text simplification and content generation
+- **Amazon Bedrock**: Claude 3 Haiku for text simplification and content generation
 - **Amazon Polly**: Natural text-to-speech
 - **AWS Lambda**: Serverless backend processing
 - **Amazon S3**: File storage and management
